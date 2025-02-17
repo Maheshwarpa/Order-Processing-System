@@ -19,7 +19,7 @@ var ps Event.ProcessingResponse
 // ConsumeMessages starts the Kafka consumer
 func ConsumeMessages(brokers []string, topic string, groupID string, wg *sync.WaitGroup) {
 
-	fmt.Println("Entered ConsumerMessages")
+	//fmt.Println("Entered ConsumerMessages")
 	// Configure Kafka consumer
 	config := sarama.NewConfig()
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
@@ -59,9 +59,9 @@ func (h *ConsumerHandler) Cleanup(sarama.ConsumerGroupSession) error { return ni
 
 // ConsumeClaim processes messages from Kafka
 func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	fmt.Println("Entered  ConsumeClaim Section")
+	//fmt.Println("Entered  ConsumeClaim Section")
 	for msg := range claim.Messages() {
-		fmt.Println("Entered claim message")
+		//fmt.Println("Entered claim message")
 		var event Event.OrderCreatedResponse
 		err := json.Unmarshal(msg.Value, &event)
 		if err != nil {
@@ -80,23 +80,32 @@ func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 		}
 		if price >= 1000 {
 			ps.Order_id = event.Order_id
-			ps.Payment_status = "SUCCESS"
+			ps.Payment_status = "FAILED"
 
 		} else {
 			ps.Order_id = event.Order_id
-			ps.Payment_status = "FAILED"
+			ps.Payment_status = "SUCCESS"
 		}
 
 		if Event.PRList == nil {
 			Event.PRList = []Event.ProcessingResponse{}
 		}
 		Event.PRList = append(Event.PRList, ps)
-		fmt.Printf("Received message: OrderID=%s, Status=%s\n", event.Order_id, ps.Payment_status)
+		err = DatabaseConn.AddPaymentStatus(DatabaseConn.DbPool, ps)
+		if err != nil {
+			log.Fatalf("error in adding data in paymentstatus table %v", err)
+		}
+		jsondata, err := json.Marshal(ps)
+		if err != nil {
+			fmt.Errorf("Unable to marshal the payment status data")
+		}
+		fmt.Printf("PaymentProcessedEvent status:\n%+v\n", string(jsondata))
+		//fmt.Printf("Received message: OrderID=%s, Status=%s\n", event.Order_id, ps.Payment_status)
 		notificationResponse, err := Notification.GetNotification(ps)
 		if err != nil {
 			log.Printf("Error sending notification: %v", err)
 		} else {
-			fmt.Println("Notification Response: ", notificationResponse)
+			fmt.Printf("Notification Response: \n%+v\n", notificationResponse)
 		}
 
 		h.wg.Done()
@@ -104,6 +113,6 @@ func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 		session.MarkMessage(msg, "")
 
 	}
-	fmt.Println("Outside of claim message")
+	//fmt.Println("Outside of claim message")
 	return nil
 }

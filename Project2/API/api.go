@@ -46,9 +46,9 @@ func saveItem(b *gin.Context) {
 	}
 
 	Orders.OrderList = append(Orders.OrderList, o1)
-	fmt.Println(Orders.OrderList)
+	//fmt.Println(Orders.OrderList)
 	b.IndentedJSON(http.StatusOK, k)
-	fmt.Println(o1.Product_Id)
+	//fmt.Println(o1.Product_Id)
 	eve, err := db.AddOrder(DatabaseConn.DbPool, o1)
 	if err != nil {
 		fmt.Errorf("Unable to add an Order, Please check %v ", err)

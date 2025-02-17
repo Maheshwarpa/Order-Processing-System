@@ -5,6 +5,7 @@ import (
 	"OPS/module/Event"
 	ord "OPS/module/Orders"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
@@ -47,7 +48,7 @@ func AddRow(Dbpool *pgxpool.Pool, od ord.Order) (int, error) {
 		return 0, err
 	}
 
-	fmt.Printf("Inserted new order with ID: %d\n", id)
+	fmt.Printf("Inserted new record at order table with ID: %d\n", id)
 	return id, nil
 }
 
@@ -55,24 +56,29 @@ func AddOrder(Dbpool *pgxpool.Pool, od ord.Order) (*Event.OrderCreatedResponse, 
 
 	insertQuery := `INSERT INTO "ordercreated" (order_id,status) VALUES ($1, $2) RETURNING order_id`
 	var id string
-	fmt.Println(od.User_Id)
+	//fmt.Println(od.User_Id)
 	var str string = "order_"
 	str += strconv.Itoa(od.Product_Id)
 	str += "_"
 	str += strconv.Itoa(od.User_Id)
 	var status string = "PENDING"
-	fmt.Println(str)
+	//fmt.Println(str)
 	err := Dbpool.QueryRow(context.Background(), insertQuery, str, status).Scan(&id)
 	if err != nil {
 		log.Fatalf("Failed to insert row: %v\n", err)
 		return &Event.OrderCreatedResponse{}, err
 	}
 
-	fmt.Printf("Inserted new order with Order-ID: %v\n", str)
+	fmt.Printf("Inserted new record at ordercreated table with Order-ID: %v\n", str)
 
 	ord1 := Event.OrderCreatedResponse{str, status}
 	Event.OCRList = append(Event.OCRList, ord1)
-	fmt.Printf("OrderEvent Response has been created: %+v\n", ord1)
+	jsondata, err := json.Marshal(ord1)
+	if err != nil {
+		fmt.Errorf("unable to marshal the response for Response", err)
+	}
+	fmt.Printf("Response:\n%+v\n", string(jsondata))
+	//fmt.Printf("OrderEvent Response has been created: %+v\n", ord1)
 	return &ord1, nil
 }
 
@@ -88,7 +94,7 @@ func AddPaymentStatus(Dbpool *pgxpool.Pool, od Event.ProcessingResponse) error {
 		return err
 	}
 
-	fmt.Printf("Inserted new payment status for Order-ID: %v\n", od.Order_id)
+	fmt.Printf("Inserted new record at paymentstatus table for Order-ID: %v\n", od.Order_id)
 	return nil
 }
 
@@ -106,7 +112,7 @@ func GetPrice(Dbpool *pgxpool.Pool, orderID string) (float64, error) {
 		return 0, err
 	}
 
-	fmt.Printf("Retrieved total price for Order-ID %s: %.2f\n", orderID, price)
+	//	fmt.Printf("Retrieved total price for Order-ID %s: %.2f\n", orderID, price)
 	return price, nil
 }
 

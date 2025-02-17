@@ -3,7 +3,6 @@ package main
 import (
 	"OPS/module/API"
 	"OPS/module/DatabaseConn"
-	"fmt"
 	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -23,11 +22,11 @@ func init() {
 	DatabaseConn.CreateTable(dbpool)
 	DatabaseConn.CreateOCD(dbpool)
 	DatabaseConn.CreatePaymentTable(dbpool)
-	fmt.Println("Hi")
+	//fmt.Println("Hi")
 }
 
 func main() {
-	fmt.Println("Hello World")
+	//fmt.Println("Hello World")
 
 	API.StartServer()
 

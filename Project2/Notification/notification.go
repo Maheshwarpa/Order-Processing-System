@@ -17,7 +17,7 @@ type NotificationResponse struct {
 }
 
 func GetNotification(ps Event.ProcessingResponse) (string, error) {
-	fmt.Println("Notification is being called")
+	//fmt.Println("Notification is being called")
 	input := ps.Order_id
 	parts := strings.Split(input, "_") // Split by "_"
 	lastPart := parts[len(parts)-1]
