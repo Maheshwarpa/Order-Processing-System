@@ -123,3 +123,35 @@ This project is an Order Processing System that integrates with Apache Kafka and
 - Install PostgreSQL
 
 - Install and configure Apache Kafka
+
+### Docker Compose Setup for PostgreSQL, Kafka, Zookeeper, and Redis
+This repository includes a Docker Compose configuration to set up a development environment with the following services:
+
+- PostgreSQL: A relational database used for storing application data.
+- Kafka: A distributed streaming platform used for building real-time data pipelines and streaming applications.
+- Zookeeper: A centralized service for maintaining configuration information, naming, and providing distributed synchronization.
+- Redis: An in-memory data structure store used as a cache, message broker, and for various other purposes.
+
+#### Run Docker Compose
+Use the following command to start all the services defined in the docker-compose.yml file:
+```
+docker-compose up
+
+```
+This command will pull the necessary Docker images (PostgreSQL, Kafka, Zookeeper, and Redis), create the containers, and start them up.
+
+#### Access the Services
+The services will be available on the following ports:
+
+- PostgreSQL: localhost:5432
+- Kafka: localhost:9092
+- Zookeeper: localhost:2181
+- Redis: localhost:6379
+You can connect to these services using any PostgreSQL client, Kafka client, Redis client, or any other related tool.
+
+#### Stopping the Services
+To stop the services and remove the containers, use the following command:
+```
+docker-compose down
+
+```
