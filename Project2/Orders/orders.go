@@ -13,3 +13,5 @@ type Order struct {
 	Quantity    int     `json:"quantity"`
 	Total_Price float64 `json:"total_price"`
 }
+
+var OrderList []Order
