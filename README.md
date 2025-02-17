@@ -149,6 +149,24 @@ docker-compose up
 ```
 This command will pull the necessary Docker images (PostgreSQL, Kafka, Zookeeper, and Redis), create the containers, and start them up.
 
+#### Running the Program
+Once your environment is set up and all dependencies are installed, navigate to the directory containing main.go and run the following command
+
+```
+go run main.go
+```
+
+This will start the Gin HTTP server on localhost:8080.
+
+#### Testing the POST Endpoint
+Once the server is running, you can test the POST endpoint /Orders by sending a request with curl or using a tool like Postman.
+
+- Using curl:
+
+```
+curl -X POST http://localhost:8080/Orders -H "Content-Type: application/json" -d '{"user_id":25, "Product_Id": 12345, "Quantity": 10, "Total_Price": 100.00}'
+```
+
 #### Access the Services
 The services will be available on the following ports:
 
