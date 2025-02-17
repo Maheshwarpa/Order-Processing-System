@@ -5,6 +5,15 @@ Project - 2
 
 This project is an Order Processing System that integrates with Apache Kafka and PostgreSQL to handle order management efficiently. It consists of multiple components, including an API server, Kafka consumers and producers, and database operations.
 
+### Note on Program Functionality
+This program is designed to handle only POST requests to the /Orders endpoint. Specifically, the program expects a JSON payload containing order data, which will be processed and saved into the database.
+
+- POST Request: Sends order data to the server for storage and processing.
+-- The payload should contain the order information in JSON format.
+-- Upon receiving a valid POST request, the server will:
+--- Save the order details in the database.
+--- Trigger Kafka consumers and producers to handle related messaging and processing.
+
 ### Features
 
 1. REST API to handle order requests
@@ -148,6 +157,31 @@ The services will be available on the following ports:
 - Zookeeper: localhost:2181
 - Redis: localhost:6379
 You can connect to these services using any PostgreSQL client, Kafka client, Redis client, or any other related tool.
+
+####  add an order, make a POST request to the following endpoint
+
+```
+POST http://localhost:8080/Orders
+
+```
+
+#### Request Body Example
+
+```
+{
+        "user_id": 9999,
+        "product_id": 25,
+        "quantity": 49,
+        "total_price": 1500.33
+        
+}
+
+```
+
+The server will respond with:
+
+- 200 OK if the order is successfully added and processed.
+- 400 Bad Request if there is an error with the request, such as invalid JSON or an issue with adding the row to the database.
 
 #### Stopping the Services
 To stop the services and remove the containers, use the following command:
